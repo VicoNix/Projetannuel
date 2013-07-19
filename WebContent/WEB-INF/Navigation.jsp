@@ -97,8 +97,7 @@ table.dispo td {
 		</tr>
 		<tr>
 			<td><div id="fileTreeDemo_1" class="demo"></div></td>
-			<td><textarea id="codexml" name="codexml" rows="5">
-					<%
+			<td><textarea id="codexml" name="codexml" rows="5"><%
             String attribut = (String) request.getAttribute("filecontentxml");
             if(attribut!=null)
             {
@@ -124,8 +123,7 @@ table.dispo td {
 			xmleditor.matchHighlight("CodeMirror-matchhighlight");
 			});
 </script></td>
-			<td><textarea id="codexsl" name="codexsl" rows="5">
-					<%
+			<td><textarea id="codexsl" name="codexsl" rows="5"><%
             attribut = (String) request.getAttribute("filecontentxsl");
             if(attribut!=null)
             {
@@ -169,8 +167,7 @@ table.dispo td {
             }
             %>"
 					width="500px" height="300px"></iframe></td>
-			<td><textarea id="codexsd" name="codexsd" rows="5">
-			<%
+			<td><textarea id="codexsd" name="codexsd" rows="5"><%
             attribut = (String) request.getAttribute("filecontentxsd");
             if(attribut!=null)
             {

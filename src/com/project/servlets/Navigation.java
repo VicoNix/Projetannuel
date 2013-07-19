@@ -1,7 +1,10 @@
 package com.project.servlets;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,53 +55,25 @@ public class Navigation extends HttpServlet {
 
 		String xmlajax=request.getParameter("xmlajax");
 		String xslajax=request.getParameter("xslajax");
-		String temphtmlfile = "temp";
-
 		String path=request.getParameter("file");
+		boolean temp=false;
+		
 
 		if(path.isEmpty())
 		{
-			path=temphtmlfile;
-			FileWriter fileWriter = null;
-	        try {
-	            File newTextFile = new File(path+".xml");
-	            fileWriter = new FileWriter(newTextFile);
-	            fileWriter.write(xmlajax);
-	            fileWriter.close();
-	        } catch (IOException ex) {
-	            
-	        } finally {
-	            try {
-	                fileWriter.close();
-	            } catch (IOException ex) {
-	                	            }
-	        }
-
-	        try {
-	            File newTextFile = new File(path+".xsl");
-	            fileWriter = new FileWriter(newTextFile);
-	            fileWriter.write(xslajax);
-	            fileWriter.close();
-	        } catch (IOException ex) {
-	            
-	        } finally {
-	            try {
-	                fileWriter.close();
-	            } catch (IOException ex) {
-	                	            }
-	        }
-	        path+=".xml";
-	        System.out.println("path="+path);
+			path=this.getServletContext().getRealPath("/")+"temp/temp.xml";
+			System.out.println(path);
+			temp=true;
 		}
 		
-		if(path.substring(path.lastIndexOf('.')).equals(".xml")||path.substring(path.lastIndexOf('.')).equals(".xsd")||path.substring(path.lastIndexOf('.')).equals(".xsl")||path.substring(path.lastIndexOf('.')).equals(".html"))
+		if(path.substring(path.lastIndexOf('.')).equals(".xml")||path.substring(path.lastIndexOf('.')).equals(".xsd")||path.substring(path.lastIndexOf('.')).equals(".xsl")||path.substring(path.lastIndexOf('.')).equals(".html")||temp)
 		{
 		Scanner scanner;
 		try {
 			scanner = new Scanner(new FileReader(path.substring(0, path.lastIndexOf('.'))+".xml"));
 			 String xml = "";
 			 while (scanner.hasNextLine()) {
-			     xml += '\n'+scanner.nextLine();
+				 xml += scanner.nextLine()+"\n";
 			 }
 			request.setAttribute("filecontentxml", xml);
 		} catch (FileNotFoundException e) {
@@ -109,27 +84,44 @@ public class Navigation extends HttpServlet {
 		scanner = new Scanner(new FileReader(path.substring(0, path.lastIndexOf('.'))+".xsl"));
 		 String xsl = "";
 		 while (scanner.hasNextLine()) {
-		     xsl += '\n'+scanner.nextLine();
+		     xsl += scanner.nextLine()+"\n";
 		 }
+
 		request.setAttribute("filecontentxsl", xsl);
 		} catch (FileNotFoundException e) {
 			request.setAttribute("filecontentxsl", null);
 		}
 
 		//HTML Temporaire suite à actualisation
-		if(xmlajax.contains("xml") && xslajax.contains("xml"))
+		if(temp)
 		{
-			
+		StringReader xslreader = new StringReader(xslajax);
+		StringReader xmlreader = new StringReader(xmlajax);
+		StringWriter htmlwriter = new StringWriter();
 		TransformerFactory tFactory = TransformerFactory.newInstance();
 		try {
-		Transformer transformer = tFactory.newTransformer(new StreamSource(path.substring(0, path.lastIndexOf('.'))+".xsl"));
-			transformer.transform(new StreamSource(path.substring(0, path.lastIndexOf('.'))+".xml"), new StreamResult(temphtmlfile+".html"));
+		Transformer transformer = tFactory.newTransformer(new StreamSource(xslreader));
+		StreamSource xmlsource = new StreamSource(xmlreader);
+			transformer.transform(xmlsource, new StreamResult(htmlwriter));
 		} catch (TransformerException e1) {
 			// TODO Bloc catch g�n�r� automatiquement
 			e1.printStackTrace();
 		}
-		request.setAttribute("filecontenthtml", temphtmlfile+".html");
-
+String temppath = path.substring(0, path.lastIndexOf('.'))+"/temp.html";
+//A CORRIGER
+temppath= temppath.replace(" ", "%");
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(temppath));
+			out.write(htmlwriter.toString());
+			out.close();
+			}
+			catch (IOException e)
+			{
+			e.printStackTrace();
+			}
+		request.setAttribute("filecontenthtml", request.getRequestURL().substring(0, request.getRequestURL().lastIndexOf("/"))+path.substring(path.lastIndexOf('/'), path.lastIndexOf('.'))+".html");
+System.out.println("fichier temp cree ici :"+temppath);
+		
 		}
 		else
 		{
@@ -143,8 +135,8 @@ public class Navigation extends HttpServlet {
 				e1.printStackTrace();
 			}
 			request.setAttribute("filecontenthtml", request.getRequestURL().substring(0, request.getRequestURL().lastIndexOf("/"))+path.substring(path.lastIndexOf('/'), path.lastIndexOf('.'))+".html");
-
 		}
+		
 		try{
 		scanner = new Scanner(new FileReader(path.substring(0, path.lastIndexOf('.'))+".xsd"));
 		 String xsd = "";
