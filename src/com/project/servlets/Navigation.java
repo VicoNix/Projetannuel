@@ -35,7 +35,7 @@ public class Navigation extends HttpServlet {
 	 */
 	public Navigation() {
 		super();
-		// TODO Auto-generated constructor stub
+
 	}
 
 	/**
@@ -53,6 +53,7 @@ public class Navigation extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 
+		request.setCharacterEncoding("UTF-8");
 		String xmlajax=request.getParameter("xmlajax");
 		String xslajax=request.getParameter("xslajax");
 		String path=request.getParameter("file");
@@ -68,29 +69,7 @@ public class Navigation extends HttpServlet {
 
 		if(path.substring(path.lastIndexOf('.')).equals(".xml")||path.substring(path.lastIndexOf('.')).equals(".xsd")||path.substring(path.lastIndexOf('.')).equals(".xsl")||path.substring(path.lastIndexOf('.')).equals(".html")||temp)
 		{
-			Scanner scanner;
-			try {
-				scanner = new Scanner(new FileReader(path.substring(0, path.lastIndexOf('.'))+".xml"));
-				String xml = "";
-				while (scanner.hasNextLine()) {
-					xml += scanner.nextLine()+"\n";
-				}
-				request.setAttribute("filecontentxml", xml);
-			} catch (FileNotFoundException e) {
-				request.setAttribute("filecontentxml", null);
-			}
 
-			try{
-				scanner = new Scanner(new FileReader(path.substring(0, path.lastIndexOf('.'))+".xsl"));
-				String xsl = "";
-				while (scanner.hasNextLine()) {
-					xsl += scanner.nextLine()+"\n";
-				}
-
-				request.setAttribute("filecontentxsl", xsl);
-			} catch (FileNotFoundException e) {
-				request.setAttribute("filecontentxsl", null);
-			}
 
 			//HTML Temporaire suite à actualisation
 			if(temp)
@@ -101,16 +80,15 @@ public class Navigation extends HttpServlet {
 				TransformerFactory tFactory = TransformerFactory.newInstance();
 				try {
 					Transformer transformer = tFactory.newTransformer(new StreamSource(xslreader));
-					StreamSource xmlsource = new StreamSource(xmlreader);
-					transformer.transform(xmlsource, new StreamResult(htmlwriter));
+					transformer.transform(new StreamSource(xmlreader), new StreamResult(htmlwriter));
 				} catch (TransformerException e1) {
-					// TODO Bloc catch g�n�r� automatiquement
+
 					e1.printStackTrace();
 				}
 				
 				try {
-					new File(path.substring(0,path.indexOf("temp.xml"))).mkdir(); 
-					BufferedWriter out = new BufferedWriter(new FileWriter(path));
+					new File(path.substring(0,path.indexOf("temp"))).mkdir(); 
+					BufferedWriter out = new BufferedWriter(new FileWriter(path.substring(0,path.lastIndexOf("."))+".html"));
 					out.write(htmlwriter.toString());
 					out.close();
 				}
@@ -118,35 +96,62 @@ public class Navigation extends HttpServlet {
 				{
 					e.printStackTrace();
 				}
-				request.setAttribute("filecontenthtml", request.getRequestURL().substring(0, request.getRequestURL().lastIndexOf("/"))+path.substring(path.lastIndexOf('/'), path.lastIndexOf('.'))+".html");
-				
-
+				request.setAttribute("filecontenthtml", request.getRequestURL().substring(0, request.getRequestURL().lastIndexOf("/"))+path.substring(path.lastIndexOf('/'), path.lastIndexOf('.'))+"/temp.html");
+				request.setAttribute("filecontentxml", xmlajax);
+				request.setAttribute("filecontentxsl", xslajax);
+				System.out.println(xmlajax);
 			}
 			else
 			{
 				//HTML final
+				
 				TransformerFactory tFactory = TransformerFactory.newInstance();
 				try {
 					Transformer transformer = tFactory.newTransformer(new StreamSource(path.substring(0, path.lastIndexOf('.'))+".xsl"));
 					transformer.transform(new StreamSource(path.substring(0, path.lastIndexOf('.'))+".xml"), new StreamResult(path.substring(0, path.lastIndexOf('.'))+".html"));
 				} catch (TransformerException e1) {
-					// TODO Bloc catch g�n�r� automatiquement
 					e1.printStackTrace();
 				}
 				request.setAttribute("filecontenthtml", request.getRequestURL().substring(0, request.getRequestURL().lastIndexOf("/"))+path.substring(path.lastIndexOf('/'), path.lastIndexOf('.'))+".html");
+						
+				Scanner scanner;
+				try {
+					scanner = new Scanner(new FileReader(path.substring(0, path.lastIndexOf('.'))+".xml"));
+					String xml = "";
+					while (scanner.hasNextLine()) {
+						xml += scanner.nextLine()+"\n";
+					}
+					request.setAttribute("filecontentxml", xml);
+				} catch (FileNotFoundException e) {
+					request.setAttribute("filecontentxml", null);
+				}
+
+				try{
+					scanner = new Scanner(new FileReader(path.substring(0, path.lastIndexOf('.'))+".xsl"));
+					String xsl = "";
+					while (scanner.hasNextLine()) {
+						xsl += scanner.nextLine()+"\n";
+					}
+
+					request.setAttribute("filecontentxsl", xsl);
+				} catch (FileNotFoundException e) {
+					request.setAttribute("filecontentxsl", null);
+				}
+				try{
+					scanner = new Scanner(new FileReader(path.substring(0, path.lastIndexOf('.'))+".xsd"));
+					String xsd = "";
+					while (scanner.hasNextLine()) {
+						xsd += '\n'+scanner.nextLine();
+					}
+					request.setAttribute("filecontentxsd", xsd);
+					scanner.close();
+				}
+				catch (FileNotFoundException e) {
+					request.setAttribute("filecontentxsd", null);
+				}
 			}
 
-			try{
-				scanner = new Scanner(new FileReader(path.substring(0, path.lastIndexOf('.'))+".xsd"));
-				String xsd = "";
-				while (scanner.hasNextLine()) {
-					xsd += '\n'+scanner.nextLine();
-				}
-				request.setAttribute("filecontentxsd", xsd);
-			}
-			catch (FileNotFoundException e) {
-				request.setAttribute("filecontentxsd", null);
-			}
+			
 		}
 		else
 		{

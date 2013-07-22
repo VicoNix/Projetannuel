@@ -65,8 +65,8 @@
 <script>
 function refreshHTML()
 {
-document.getElementById('xmlajax').value=document.getElementById('codexml').value;
-document.getElementById('xslajax').value=document.getElementById('codexsl').value;
+document.getElementById('xmlajax').value=xmleditor.getValue();
+document.getElementById('xslajax').value=xsleditor.getValue();
 }
 </script>
 <h2><p align="center">Navigation</p></h2>
