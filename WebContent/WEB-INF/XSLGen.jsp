@@ -52,6 +52,7 @@
    <li class='active'><a href='XSLGen'><span>Génération de fichier XSL</span></a></li>
    <li><a href='Navigation'><span>Navigation</span></a></li>
    <li ><a href='FormViewer'><span>Remplissage de formulaire</span></a></li>
+      <li ><a href='CreateView'><span>Creation de vues</span></a></li>
    <li class='last'><a href='Contact'><span>Contact</span></a></li>
 </ul>
 </div>

@@ -11,7 +11,8 @@
     <head>
 
 <script language="javascript" src="js/pa-ajax.js"></script>
-
+<script type="text/javascript" src="js/jquery-1.10.1.min.js"></script>
+<script src="js/jquery-ui-1.10.3.custom.min.js"></script>
         <meta charset="utf-8" />
         <title>BDDTOXML</title>
     </head>
@@ -26,6 +27,7 @@
    <li><a href='XSLGen'><span>Génération de fichier XSL</span></a></li>
    <li><a href='Navigation'><span>Navigation</span></a></li>
    <li ><a href='FormViewer'><span>Remplissage de formulaire</span></a></li>
+      <li ><a href='CreateView'><span>Creation de vues</span></a></li>
    <li class='last'><a href='Contact'><span>Contact</span></a></li>
 </ul>
 </div>
@@ -114,6 +116,11 @@
 		<option>!=</option>
 		</select>
 		
+<script>
+jQuery(function(){
+$("#condition").autocomplete("list.jsp");
+});
+</script>
 		
 		<input id="condition" name="condition" onChange="envoyerRequetecondition();" onclick="envoyerRequetecondition();"/>
 		<form method="POST" action="XMLGen" id="XMLGenform">
