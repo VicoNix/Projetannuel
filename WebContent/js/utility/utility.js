@@ -10,7 +10,14 @@ function hideBlock(blockId)
 
 function changeVisibility(blockId, visible)
 {
-	document.getElementById(blockId).style.display = visible ? "inline-block" : "none";
+	var element = document.getElementById(blockId);
+	
+	element.style.display = visible ? "inline-block" : "none";
+	
+	if (visible && undefined != element.focus)
+	{
+		element.focus();
+	}
 }
 
 function parseXML(xmlText)

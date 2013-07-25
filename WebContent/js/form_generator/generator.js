@@ -275,4 +275,6 @@ function swap()
 	document.getElementById('btnSwap').innerHTML = viewVisible ? 'Afficher source' : 'Afficher éditeur';
 	
 	viewVisible = !viewVisible;
+	
+	XSL_updateForm(viewVisible);
 }
