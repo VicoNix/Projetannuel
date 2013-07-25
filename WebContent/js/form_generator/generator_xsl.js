@@ -1,43 +1,87 @@
-var xsl_form = document.createElement("form");
-var xsleditor = CodeMirror.fromTextArea(document.getElementById("xsl_source"), {
-	lineNumbers:  "true",
-	mode: "text/html",
-	htmlMode: true,
-	autoCloseTags: true,
-	autofocus: "true",
-	reindentOnLoad: "true",
-	readOnly: "true"
-	});
+var xsl_document;
+var xsl_stylesheet;
+var xsl_template;
+var xsl_form;
 
-function XSL_updateForm()
+var xsleditor;
+
+function XSL_init()
 {
-	var string_representation = xsl_form.innerHTML;
+	xsl_document = document.createElement("document");
 	
-	xsleditor.setValue(string_representation);
+	// create a real xsl document= document.createElement("xsl:stylesheet");
+	xsl_stylesheet = document.createElement("xsl:stylesheet");
+	xsl_stylesheet.setAttribute('version', '1.0');
+	xsl_stylesheet.setAttribute('xmlns:xsl', 'http://www.w3.org/1999/XSL/Transform');
+	//xsl_stylesheet.setAttribute('xmlns', 'http://www.w3.org/TR/xhtml1/strict');
 	
-	document.getElementById("xsl_source").innerHTML = string_representation.
-	replace (/</ig, '&lt;').
-	replace (/>/ig, '&gt;');
+	xsl_document.appendChild(xsl_stylesheet);
 	
-	xsleditor.setValue(string_representation);
+	xsl_template = document.createElement("xsl:template");
+	xsl_template.setAttribute('match', '/');
 	
-	var totalLines = xsleditor.lineCount();
-    var totalChars = xsleditor.getTextArea().value.length;
-    xsleditor.autoFormatRange({line:0, ch:0}, {line:totalLines, ch:totalChars});
+	xsl_stylesheet.appendChild(xsl_template);
+
+	xsl_form = document.createElement('form');
+	
+	xsl_template.appendChild(xsl_form);
+	
+	xsleditor = CodeMirror.fromTextArea(document.getElementById("xsl_source"), {
+		lineNumbers:  "true",
+		mode: "text/html",
+		htmlMode: true,
+		autoCloseTags: true,
+		autofocus: "true",
+		reindentOnLoad: "true",
+		readOnly: "true"
+		});
+}
+
+function XSL_transform(xmlDatasource, callback)
+{
+	// use datasource filename, xsl and callback
+	executeFormPostRequest(
+			'XSLGen',
+			'xslt|'+ readCookie('xml_datasource') + '|' + xsl_document.innerHTML,
+			function(html)
+			{
+				if (undefined != callback)
+				{
+					callback(html);
+				}
+			});
+}
+
+function XSL_updateForm(viewVisible)
+{
+	if (!viewVisible)
+	{
+		var string_representation = xsl_form.innerHTML;
+		
+		xsleditor.setValue(string_representation);
+		
+		document.getElementById("xsl_source").innerHTML = string_representation.
+		replace (/</ig, '&lt;').
+		replace (/>/ig, '&gt;');
+		
+		xsleditor.setValue(string_representation);
+		
+		var totalLines = xsleditor.lineCount();
+	    var totalChars = xsleditor.getTextArea().value.length;
+	    xsleditor.autoFormatRange({line:0, ch:0}, {line:totalLines, ch:totalChars});
+	}
 }
 
 function XSL_resetForm()
 {
-	xsl_form.innerHTML = '';
-	
-	XSL_updateForm();
+	XSL_init();
 }
 
-function XSL_addElement(element)
+function XSL_addElement(element, viewVisible)
 {
 	xsl_form.appendChild(element);
 	
-	XSL_updateForm();
+	XSL_updateForm(viewVisible);
 }
 
 function XSL_createCombobox(newId, newId, datasource, displayedValue)
@@ -61,5 +105,5 @@ function XSL_createCombobox(newId, newId, datasource, displayedValue)
 
 function XSL_getDocument()
 {
-	return xsl_form;
+	return xsl_document;
 }

@@ -5,15 +5,22 @@ var selectedId;
 var currentElement;
 var currentType;
 var xmlDatasource;
+var viewVisible = true;
 
-function resetForm(xml)
+// xmlDatasource
+function launchGenerator()
+{
+	resetForm();
+	
+	displayBlock("container");
+}
+
+function resetForm()
 {
 	fieldCount = 0;
 	selectedId = null;
 	currentElement = null;
 	currentType = null;
-	
-	xmlDatasource = xml;
 	
 	XSL_resetForm();
 	HTML_resetForm();
@@ -28,6 +35,13 @@ function updateNewId(field_)
 	newId = field_ + fieldCount;
 }
 
+function updateHTML()
+{
+	XSL_transform(xmlDatasource, function(result){
+		HTML_setDocument(result);
+	});
+}
+
 function addTable()
 {
 	updateNewId("table");
@@ -40,6 +54,7 @@ function addTable()
 	var dataRow = document.createElement("tr");
 	var rowPattern = document.createElement("xsl:for-each");
 	var tmpCell;
+	var xslDataPattern;
 
 	rowPattern.setAttribute("select", prompt("Source de données:", ""));
 
@@ -53,7 +68,10 @@ function addTable()
 		headersRow.appendChild(tmpCell);
 
 		tmpCell = document.createElement("td");
-		tmpCell.innerHTML = prompt("Attribut n°"+ (i+1) + ": ");
+		xslDataPattern = document.createElement("xsl:value-of");
+		xslDataPattern.setAttribute("select", prompt("Champ n°"+ (i+1) + ": "));
+		
+		tmpCell.appendChild(xslDataPattern);
 
 		dataRow.appendChild(tmpCell);
 	}
@@ -63,7 +81,9 @@ function addTable()
 	currentElement.appendChild(headersRow);
 	currentElement.appendChild(rowPattern);
 
-	document.getElementById("form").appendChild(currentElement);
+	XSL_addElement(currentElement, viewVisible);
+
+	updateHTML();
 
 	displaySelectedProperties("table");
 }
@@ -75,10 +95,13 @@ function addLabel()
 	currentElement = document.createElement("label");
 
 	currentElement.setAttribute("id", newId);
+	currentElement.setAttribute("onMouseUp", "selectNode(\""+newId+"\", \"label\")");
+	
 	currentElement.innerHTML = "Label";
 	
-	XSL_addElement(currentElement);
-	HTML_setDocument(xmlDocument.transformNode(XSL_getDocument()));
+	XSL_addElement(currentElement, viewVisible);
+
+	updateHTML();
 
 	displaySelectedProperties("label");
 }
@@ -93,9 +116,10 @@ function addTextField()
 	currentElement.setAttribute("name", newId);
 	currentElement.setAttribute("type", "text");
 	currentElement.setAttribute("value", "");
+	
+	XSL_addElement(currentElement, viewVisible);
 
-	XSL_addElement(currentElement.cloneNode(true));
-	HTML_addElement(currentElement.cloneNode(true));
+	updateHTML();
 
 	displaySelectedProperties("input");
 }
@@ -111,8 +135,9 @@ function addPasswordField()
 	currentElement.setAttribute("type", "password");
 	currentElement.setAttribute("value", "");
 
-	XSL_addElement(currentElement.cloneNode(true));
-	HTML_addElement(currentElement.cloneNode(true));
+	XSL_addElement(currentElement, viewVisible);
+	
+	updateHTML();
 
 	displaySelectedProperties("input");
 }
@@ -125,14 +150,10 @@ function addCombobox()
 
 	currentElement.setAttribute("id", newId);
 	currentElement.setAttribute("name", newId);
-	
-	HTML_addElement(currentElement.cloneNode(true));
-	
-	// XSL specific processing
-	//currentElement = XSL_addCombobox(newId, newId, "vehicules/immatriculation", ".");
 
-	XSL_addElement( XSL_createCombobox(newId, newId, "vehicules/immatriculation", "."));
-	HTML_setDocument(xmlDocument.transformNode(XSL_getDocument()));
+	XSL_addElement(XSL_createCombobox(newId, newId, "Result/LIEN_VEHICULE_POTENTIEL_VIEW", "DATE_RELEVE"), viewVisible);
+
+	updateHTML();
 	
 	displaySelectedProperties("select");
 }
@@ -147,8 +168,9 @@ function addRadioButton()
 	currentElement.setAttribute("name", newId);
 	currentElement.setAttribute("type", "radio");
 
-	XSL_addElement(currentElement.cloneNode(true));
-	HTML_addElement(currentElement.cloneNode(true));
+	XSL_addElement(currentElement, viewVisible);
+	
+	updateHTML();
 
 	displaySelectedProperties("radio");
 }
@@ -163,8 +185,9 @@ function addCheckbox()
 	currentElement.setAttribute("name", newId);
 	currentElement.setAttribute("type", "checkbox");
 
-	XSL_addElement(currentElement.cloneNode(true));
-	HTML_addElement(currentElement.cloneNode(true));
+	XSL_addElement(currentElement, viewVisible);
+	
+	updateHTML();
 
 	displaySelectedProperties("checkbox");
 }
@@ -177,8 +200,9 @@ function addEOL()
 
 	currentElement.setAttribute("id", newId);
 
-	XSL_addElement(currentElement.cloneNode(true));
-	HTML_addElement(currentElement.cloneNode(true));
+	XSL_addElement(currentElement, viewVisible);
+	
+	updateHTML();
 	
 	displaySelectedProperties("eol");
 }
@@ -188,16 +212,11 @@ function displaySelectedProperties(type)
 	currentType = type;
 	selectedId = currentElement.id;
 	document.getElementById("currentId").value = currentElement.id;
-	document.getElementById("defaultValue").value = currentElement.value;
 
-	if (undefined == document.getElementById("defaultValue").value
-		|| null == document.getElementById("defaultValue").value)
-	{
-		if ("input" == type)
-			document.getElementById("defaultValue").value = currentElement.value;
-		else
-			document.getElementById("defaultValue").innerHTML = currentElement.value;
-	}
+	if ("input" == type)
+		document.getElementById("defaultValue").value = currentElement.value;
+	else
+		document.getElementById("defaultValue").value = currentElement.innerHTML;
 
 	// handle properties panels to display
 	if ('radio' == type)
@@ -226,6 +245,13 @@ function displaySelectedProperties(type)
 	}
 }
 
+function selectNode(nodeId, type)
+{
+	selectedId = nodeId;
+	
+	displaySelectedProperties(type);
+}
+
 function updateSelectedId()
 {
 	var element = document.getElementById(selectedId);
@@ -233,10 +259,20 @@ function updateSelectedId()
 	element.id = document.getElementById("currentId").value;
 	element.setAttribute("name", document.getElementById("currentId").value);
 	element.value = document.getElementById("defaultValue").value;
-
 }
 
 function updateSelectedValue()
 {
 	document.getElementById(selectedId).value  = document.getElementById("defaultValue").value;
+}
+
+// swaps between view display and editor display
+function swap()
+{
+	changeVisibility('xsl_container', viewVisible);
+	changeVisibility('editor', !viewVisible);
+	
+	document.getElementById('btnSwap').innerHTML = viewVisible ? 'Afficher source' : 'Afficher éditeur';
+	
+	viewVisible = !viewVisible;
 }

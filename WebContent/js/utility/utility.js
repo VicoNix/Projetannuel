@@ -1,11 +1,16 @@
 function displayBlock(blockId)
 {
-	document.getElementById(blockId).style.display = "inline-block";
+	changeVisibility(blockId, true);
 }
 
 function hideBlock(blockId)
 {
-	document.getElementById(blockId).style.display = "none";
+	changeVisibility(blockId, false);
+}
+
+function changeVisibility(blockId, visible)
+{
+	document.getElementById(blockId).style.display = visible ? "inline-block" : "none";
 }
 
 function parseXML(xmlText)
@@ -15,13 +20,13 @@ function parseXML(xmlText)
 	if (window.DOMParser)
 	{
 		parser=new DOMParser();
-		xmlDoc=parser.parseFromString(txt,"text/xml");
+		xmlDoc=parser.parseFromString(xmlText,"text/xml");
 	}
 	else // Internet Explorer
 	{
 		xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
 		xmlDoc.async=false;
-		xmlDoc.loadXML(txt); 
+		xmlDoc.loadXML(xmlText); 
 	}
 	
 	return xmlDoc;

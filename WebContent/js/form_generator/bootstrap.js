@@ -14,17 +14,7 @@ function include(src, attributes)
 	} catch(e) { return false; }
 }
 
-Node.prototype.transformNode = function (oXslDom) {
-    var oProcessor = new XSLTProcessor();
-    oProcessor.importStylesheet(oXslDom);
-    var oResultDom = oProcessor.transformToDocument(this);
-    var sResult = oResultDom.xml;
-    if (sResult.indexOf("<transformiix:result") > -1) {
-        sResult = sResult.substring(sResult.indexOf(">") + 1, 
-                                    sResult.lastIndexOf("<"));
-    }
-    return sResult;                
-};
+
 
 function includeRequiredFiles()
 {
@@ -33,4 +23,5 @@ function includeRequiredFiles()
 	include('js/form_generator/generator.js');
 	include('js/utility/utility.js');
 	include('js/utility/request.js');
+	include('js/utility/cookies.js');
 }

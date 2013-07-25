@@ -25,3 +25,8 @@ function HTML_updateForm()
     var totalChars = xsleditor.getTextArea().value.length;
     xsleditor.autoFormatRange({line:0, ch:0}, {line:totalLines, ch:totalChars});
 }
+
+function HTML_setDocument(html)
+{
+	document.getElementById("form").innerHTML = html;
+}

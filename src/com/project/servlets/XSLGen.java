@@ -1,15 +1,24 @@
 package com.project.servlets;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import com.project.utility.HTMLInputNormalizer;
 
 /**
  * Servlet implementation class XSLGen
@@ -46,7 +55,7 @@ public class XSLGen extends HttpServlet {
 		InputStream is = request.getInputStream();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		FileInputStream fis = null;
-		String query, data;
+		String query, data, filename;
 		int readBytes = 0;
 		
 		while (-1 != (readBytes = is.read(buffer)))
@@ -58,11 +67,13 @@ public class XSLGen extends HttpServlet {
 		
 		baos.close();
 		
+		System.out.println("Query: "+query);
+		
 		if (query.startsWith("file|"))
 		{
-			query = query.substring(5);
+			filename = query.substring(5);
 			
-			fis = new FileInputStream(query);
+			fis = new FileInputStream(filename);
 			baos = new ByteArrayOutputStream();
 			buffer = new byte[512];
 			
@@ -78,6 +89,30 @@ public class XSLGen extends HttpServlet {
 			System.out.println(data);
 			
 			os.write(data.getBytes());
+		}
+		else if (query.startsWith("xslt|"))
+		{
+			query = query.substring(5);
+			
+			// retrieve filename
+			filename = query.substring(0, query.indexOf('|'));
+			data = query.substring(query.indexOf('|')+1, query.length());
+			
+			System.out.println("filename: "+filename);
+			System.out.println("Data: "+data);
+			
+			baos = new ByteArrayOutputStream();
+			
+			TransformerFactory tFactory = TransformerFactory.newInstance();
+						
+			try {
+			Transformer transformer = tFactory.newTransformer(new StreamSource(new ByteArrayInputStream(HTMLInputNormalizer.normalize(data).getBytes())));
+				transformer.transform(new StreamSource(filename), new StreamResult(baos));
+			} catch (TransformerException e1) {
+				e1.printStackTrace();
+			}
+			
+			os.write(new String(baos.toByteArray()).substring("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".length()).getBytes());
 		}
 	}
 }
