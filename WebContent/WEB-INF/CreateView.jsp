@@ -178,7 +178,14 @@
 			
 			out.println("<td>");out.println(champ.getName());out.println("</td>");
 			out.println("<td>");out.println(champ.getType());out.println("</td>");
-			out.println("<td>");out.println(champ.getForeign_key());out.println("</td>");
+			
+			if(champ.getForeign_key() != null){
+				out.println("<td>");out.println(champ.getForeign_key());out.println("</td>");
+			}
+			else{
+				out.println("<td>");out.println("");out.println("</td>");	
+			}
+			//out.println("<td>");out.println(champ.getForeign_key());out.println("</td>");
 			
 			
 			out.println("</tr>");
