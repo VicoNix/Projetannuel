@@ -13,6 +13,8 @@
 <script language="javascript" src="js/pa-ajax.js"></script>
 <script type="text/javascript" src="js/jquery-1.10.1.min.js"></script>
 <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript" src="JS/jquery-1.4.2.min.js"></script>
+
         <meta charset="utf-8" />
         <title>BDDTOXML</title>
     </head>
@@ -20,6 +22,7 @@
     <body>
     <%@ include file="Header.jsp"%>
          <link href="css/menu_assets/styles.css" rel="stylesheet" type="text/css">
+         <link href="css/autocomplete.css" rel="stylesheet" type="text/css">
 
 <div id='cssmenu'>
 <ul>
@@ -122,7 +125,7 @@ $("#condition").autocomplete("list.jsp");
 });
 </script>
 		
-		<input id="condition" name="condition" onChange="envoyerRequetecondition();" onclick="envoyerRequetecondition();"/>
+		<input id="condition" name="condition"/>
 		<form method="POST" action="XMLGen" id="XMLGenform">
 		<input type="hidden"  name="xml" id="xml">
 		<input type="hidden"  name="where" id="where">

@@ -2,7 +2,7 @@
 
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
-  width: 700px;
+  width: 500px;
   font-family: monospace;
   height: 300px;
   float: left;

@@ -158,7 +158,7 @@ public class XmlValidator {
 	public String getFilePath() {
 		
 		String txtDate=new SimpleDateFormat("YYYYMMDDhhmmss", Locale.FRANCE).format(new Date());
-		String adressedufichier = path + "\\resultat"+txtDate+".xml";
+		String adressedufichier = path + "//resultat"+txtDate+".xml";
 		System.out.println(adressedufichier);
 		Transformer transformer;
 		try { 
