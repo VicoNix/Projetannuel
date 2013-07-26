@@ -66,6 +66,14 @@ html, body {
 	overflow: auto;
 }
 
+#xsl_container .CodeMirror {
+  /* Set height, width, borders, and global font properties here */
+  width: 900px;
+  font-family: monospace;
+  height: 500px;
+  float: left;
+}
+
 div
 {
 	background-color: #fff;
@@ -73,7 +81,7 @@ div
 
 label {
 	display: inline-block;
-	width: 120px;
+	min-width: 120px;
 	margin: 5px 0 0 5px; /* top right bottom left */
 }
 

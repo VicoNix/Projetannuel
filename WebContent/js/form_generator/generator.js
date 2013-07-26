@@ -7,11 +7,11 @@ var currentType;
 var xmlDatasource;
 var viewVisible = true;
 
-// xmlDatasource
+//xmlDatasource
 function launchGenerator()
 {
 	resetForm();
-	
+
 	displayBlock("container");
 }
 
@@ -21,7 +21,7 @@ function resetForm()
 	selectedId = null;
 	currentElement = null;
 	currentType = null;
-	
+
 	XSL_resetForm();
 	HTML_resetForm();
 }
@@ -70,7 +70,7 @@ function addTable()
 		tmpCell = document.createElement("td");
 		xslDataPattern = document.createElement("xsl:value-of");
 		xslDataPattern.setAttribute("select", prompt("Champ n°"+ (i+1) + ": "));
-		
+
 		tmpCell.appendChild(xslDataPattern);
 
 		dataRow.appendChild(tmpCell);
@@ -96,9 +96,9 @@ function addLabel()
 
 	currentElement.setAttribute("id", newId);
 	currentElement.setAttribute("onMouseUp", "selectNode(\""+newId+"\", \"label\")");
-	
+
 	currentElement.innerHTML = "Label";
-	
+
 	XSL_addElement(currentElement, viewVisible);
 
 	updateHTML();
@@ -117,7 +117,7 @@ function addTextField()
 	currentElement.setAttribute("type", "text");
 	currentElement.setAttribute("value", "");
 	currentElement.setAttribute("onMouseUp", "selectNode(\""+ newId +"\", \"input\")");
-	
+
 	XSL_addElement(currentElement, viewVisible);
 
 	updateHTML();
@@ -138,7 +138,7 @@ function addPasswordField()
 	currentElement.setAttribute("onMouseUp", "selectNode(\""+ newId +"\", \"input\")");
 
 	XSL_addElement(currentElement, viewVisible);
-	
+
 	updateHTML();
 
 	displaySelectedProperties("input");
@@ -153,10 +153,10 @@ function addCombobox()
 	currentElement.setAttribute("id", newId);
 	currentElement.setAttribute("name", newId);
 
-	XSL_addElement(XSL_createCombobox(newId, newId, "Result/LIEN_VEHICULE_POTENTIEL_VIEW", "DATE_RELEVE"), viewVisible);
+	XSL_addElement(XSL_createCombobox(newId, newId, "*/*/*[1]", "."), viewVisible);
 
 	updateHTML();
-	
+
 	displaySelectedProperties("select");
 }
 
@@ -169,9 +169,10 @@ function addRadioButton()
 	currentElement.setAttribute("id", newId);
 	currentElement.setAttribute("name", newId);
 	currentElement.setAttribute("type", "radio");
+	currentElement.setAttribute("onMouseUp", "selectNode(\""+ newId +"\", \"radio\")");
 
 	XSL_addElement(currentElement, viewVisible);
-	
+
 	updateHTML();
 
 	displaySelectedProperties("radio");
@@ -186,9 +187,10 @@ function addCheckbox()
 	currentElement.setAttribute("id", newId);
 	currentElement.setAttribute("name", newId);
 	currentElement.setAttribute("type", "checkbox");
+	currentElement.setAttribute("onMouseUp", "selectNode(\""+ newId +"\", \"checkbox\")");
 
 	XSL_addElement(currentElement, viewVisible);
-	
+
 	updateHTML();
 
 	displaySelectedProperties("checkbox");
@@ -197,15 +199,15 @@ function addCheckbox()
 function addEOL()
 {
 	updateNewId("end");
-	
+
 	currentElement = document.createElement("br");
 
 	currentElement.setAttribute("id", newId);
 
 	XSL_addElement(currentElement, viewVisible);
-	
+
 	updateHTML();
-	
+
 	displaySelectedProperties("eol");
 }
 
@@ -216,46 +218,47 @@ function displaySelectedProperties(type)
 	document.getElementById("currentId").value = currentElement.id;
 
 	if ("input" == type)
+	{
 		document.getElementById("defaultValue").value = currentElement.value;
+		document.getElementById("currentName").value = currentElement.getAttribute("name");
+	}	
 	else
+	{
 		document.getElementById("defaultValue").value = currentElement.innerHTML;
+		document.getElementById("currentName").value = "";
+	}
 
 	// handle properties panels to display
 	displayBlock('basicProperties');
-	
+
 	if ('input' == type || 'label' == type)
 	{
 		displayBlock('textProperties');
-		hideBlock('radioProperties');
-		hideBlock('checkboxProperties');
+		hideBlock('tableProperties');
 		hideBlock('comboProperties');
 	}
 	else if ('radio' == type)
 	{
 		hideBlock('textProperties');
-		displayBlock('radioProperties');
-		hideBlock('checkboxProperties');
+		hideBlock('tableProperties');
 		hideBlock('comboProperties');
 	}
 	else if ('select' == type)
 	{
 		hideBlock('textProperties');
-		hideBlock('radioProperties');
-		hideBlock('checkboxProperties');
+		hideBlock('tableProperties');
 		displayBlock('comboProperties');
 	}
-	else if ('checkbox' == type)
+	else if ('table' == type)
 	{
 		hideBlock('textProperties');
-		hideBlock('radioProperties');
-		displayBlock('checkboxProperties');
+		displayBlock('tableProperties');
 		hideBlock('comboProperties');
 	}
 	else
 	{
 		hideBlock('textProperties');
-		hideBlock('radioProperties');
-		hideBlock('checkboxProperties');
+		hideBlock('tableProperties');
 		hideBlock('comboProperties');
 	}
 }
@@ -263,51 +266,94 @@ function displaySelectedProperties(type)
 function selectNode(nodeId, type)
 {
 	currentElement = document.getElementById(nodeId);
-	
+
 	displaySelectedProperties(type);
+}
+
+function deleteSelected()
+{
+	XSL_deleteElement(selectedId);
+
+	hideBlock('basicProperties');
+	hideBlock('textProperties');
+	hideBlock('tableProperties');
+	hideBlock('comboProperties');
+
+	updateHTML();
 }
 
 function updateSelectedId()
 {
 	var element = document.getElementById(selectedId);
-	
+
 	element.id = document.getElementById("currentId").value;
-	element.setAttribute("name", document.getElementById("currentId").value);
-	element.value = document.getElementById("defaultValue").value;
 	element.setAttribute("onMouseUp", "selectNode(\""+element.id +"\", \"label\")");
-	
+
 	XSL_updateElement(selectedId, element);
-	
+
 	selectedId = element.id;
-	
+
 	updateHTML();
 }
 
+function updateSelectedName()
+{
+	var element = document.getElementById(selectedId);
 
-// Allows to change value (for text inputs) and label content
+	element.setAttribute("name", document.getElementById("currentName").value);
+
+	XSL_updateElement(selectedId, element);
+
+	selectedId = element.id;
+
+	updateHTML();
+}
+
+//Allows to change value (for text inputs) and label content
 function updateSelectedValue()
 {
 	var elementToUpdate = document.getElementById(selectedId);
-	
+
 	if (undefined != elementToUpdate.value)
 		elementToUpdate.setAttribute("value", document.getElementById("defaultValue").value);
 	else
 		elementToUpdate.innerHTML = document.getElementById("defaultValue").value;
-	
+
 	XSL_updateElement(selectedId, elementToUpdate);
-	
+
 	updateHTML();
 }
 
-// swaps between view display and editor display
+function updateSelectedDatasource()
+{
+	var select = document.getElementById("xmlColumns");
+	var option = select.options[select.selectedIndex];
+	
+	XSL_updateCombobox(document.getElementById("currentId").value, option.value, ".");
+
+	updateHTML();
+}
+
+function updateSelectedAttribute(attributeName, fieldValueId)
+{
+	var elementToUpdate = document.getElementById(selectedId);
+
+	elementToUpdate.setAttribute(attributeName, document.getElementById(fieldValueId).value);
+
+	XSL_updateElement(selectedId, elementToUpdate);
+
+	updateHTML();
+}
+
+//swaps between view display and editor display
 function swap()
 {
 	changeVisibility('xsl_container', viewVisible);
 	changeVisibility('editor', !viewVisible);
-	
-	document.getElementById('btnSwap').innerHTML = viewVisible ? 'Afficher source' : 'Afficher éditeur';
-	
+
 	viewVisible = !viewVisible;
-	
+
+	document.getElementById('btnSwap').innerHTML = viewVisible ? 'Afficher source' : 'Afficher éditeur';
+
 	XSL_updateForm(viewVisible);
 }

@@ -87,8 +87,17 @@ function XSL_addElement(element, viewVisible)
 function XSL_updateElement(id, newElement)
 {
 	var nodeToReplace = findFirstNode(xsl_form, newElement.tagName, 'id', id);
-	
+		
 	xsl_form.replaceChild(newElement, nodeToReplace);
+}
+
+function XSL_deleteElement(id)
+{
+	if (undefined != xsl_form.firstChild)
+	{
+		xsl_form.removeChild(findFirstNode(xsl_form, '*', 'id', id));
+		XSL_updateForm(viewVisible);
+	}	
 }
 
 function XSL_createCombobox(newId, newId, datasource, displayedValue)
@@ -106,8 +115,29 @@ function XSL_createCombobox(newId, newId, datasource, displayedValue)
 	optionElement.appendChild(xslDataPattern);
 	xslDataLoop.appendChild(optionElement);
 	currentElement.appendChild(xslDataLoop);
-	
+		
 	return currentElement;
+}
+
+function XSL_updateCombobox(id, datasource, displayedValue)
+{
+	var select = findFirstNode(xsl_form, 'select', 'id', id);
+	
+	select.innerHTML = '';
+	
+	//var combobox
+	var xslDataLoop = document.createElement("xsl:for-each");
+
+	xslDataLoop.setAttribute("select", datasource);
+
+	var optionElement = document.createElement("option");
+	var xslDataPattern = document.createElement("xsl:value-of");
+
+	xslDataPattern.setAttribute("select", displayedValue);
+
+	optionElement.appendChild(xslDataPattern);
+	xslDataLoop.appendChild(optionElement);
+	select.appendChild(xslDataLoop);
 }
 
 function XSL_getDocument()

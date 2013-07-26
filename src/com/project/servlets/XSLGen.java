@@ -114,5 +114,36 @@ public class XSLGen extends HttpServlet {
 			
 			os.write(new String(baos.toByteArray()).substring("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".length()).getBytes());
 		}
+		else if (query.startsWith("xml_columns|"))
+		{
+			String xsl = "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
+					+"<xsl:template match=\"/\">"
+					+ "<xsl:for-each select=\"*/*/*\"><option><xsl:attribute name=\"value\">*/*/<xsl:value-of select=\"name()\"></xsl:value-of></xsl:attribute>"
+					+ "<xsl:value-of select=\"name()\"></xsl:value-of></option></xsl:for-each>"
+					+ "</xsl:template></xsl:stylesheet>";
+			
+			query = query.substring(11);
+			
+			
+			
+			// retrieve filename
+			filename = query.substring(query.indexOf('|')+1, query.length());
+			
+			System.out.println("filename: "+filename);
+		//	System.out.println("Data: "+data);
+			
+			baos = new ByteArrayOutputStream();
+			
+			TransformerFactory tFactory = TransformerFactory.newInstance();
+						
+			try {
+				System.out.println("XSL: "+xsl);
+			Transformer transformer = tFactory.newTransformer(new StreamSource(new ByteArrayInputStream(xsl.getBytes())));
+				transformer.transform(new StreamSource(filename), new StreamResult(baos));
+				os.write(new String(baos.toByteArray()).substring("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".length()).getBytes());
+			} catch (TransformerException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 }

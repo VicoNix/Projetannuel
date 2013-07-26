@@ -1,5 +1,4 @@
-<%@ page
-	import="java.io.File,java.io.FilenameFilter,java.util.Arrays"%>
+<%@ page import="java.io.File,java.io.FilenameFilter,java.util.Arrays"%>
 <%
 /**
   * jQuery File Tree JSP Connector
@@ -8,6 +7,7 @@
   * 21 April 2008
 */	
     String dir = getServletContext().getRealPath(request.getParameter("dir"));
+	String extFilter = "xml";
 
     if (dir == null) {
     	return;
@@ -40,7 +40,9 @@
 		    if (!new File(dir, file).isDirectory()) {
 				int dotIndex = file.lastIndexOf('.');
 				String ext = dotIndex > 0 ? file.substring(dotIndex + 1) : "";
-				out.print("<li class=\"file ext_" + ext + "\"><a href=\"#\" rel=\"" + dir + file + "\">"
+				
+				if (null == extFilter || extFilter.equals(ext))
+					out.print("<li class=\"file ext_" + ext + "\"><a href=\"#\" rel=\"" + dir + file + "\">"
 					+ file + "</a></li>");
 		    	}
 		}

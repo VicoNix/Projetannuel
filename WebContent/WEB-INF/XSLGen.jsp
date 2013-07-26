@@ -41,7 +41,15 @@
 				script : 'js/jqueryFileTree/connectors/jqueryFileTree.jsp'
 			}, function(file) {
 				createCookie('xml_datasource', file, 1);
-				launchGenerator();
+				executeFormPostRequest(
+						'XSLGen',
+						'xml_columns|'+ readCookie('xml_datasource'),
+						function(columns)
+						{
+							createCookie('xml_columns', columns, 1);
+							document.getElementById('xmlColumns').innerHTML = columns;
+							launchGenerator();
+						});
 			});
 		});
 	</script>
@@ -104,8 +112,7 @@
 						<fieldset>
 							<legend>Options</legend>
 							<button>Generate form</button>
-							<button>Preview form</button>
-							<button>Remove element</button>
+							<button onMouseUp="deleteSelected()">Remove element</button>
 							<button onMouseUp="resetForm()">Reset</button>
 							<button onMouseUp="displayBlock('toolBox')">Display
 								properties</button>
@@ -115,37 +122,17 @@
 							<legend>Propriétés communes</legend>
 							<label>Id:</label> <input id="currentId"
 								onblur="updateSelectedId();" type="text" />
+							<label>Name:</label> <input id="currentName"
+								onblur="updateSelectedName();" type="text" />
 						</fieldset>
 						<fieldset id="textProperties" style="display: none;">
 							<legend>Propriétés texte</legend>
-							<label>Texte:</label> <input id="defaultValue" onblur="updateSelectedValue();"
+							<label>Valeur:</label> <input id="defaultValue" onblur="updateSelectedValue();"
 								type="text" />
 						</fieldset>
 						<fieldset id="comboProperties" style="display: none;">
-							<legend>Datasource</legend>
-							<label>Url:</label><input id="dataSourceUrl"
-								onblur="updateDatasourceUrl();" type="text" /> <label>Static:</label><input
-								id="defaultValue" onblur="updateDatasourceFromText();"
-								type="text" /> <label>Function:</label><input id="" onblur=""
-								type="text" />
-						</fieldset>
-						<fieldset id="comboProperties" style="display: none;">
-							<legend>Datasource</legend>
-							<label>Url:</label><input id="dataSourceUrl"
-								onblur="updateDatasourceUrl();" type="text" /> <label>Static:</label><input
-								id="defaultValue" onblur="updateDatasourceFromText();"
-								type="text" /> <label>Function:</label><input id="" onblur=""
-								type="text" />
-						</fieldset>
-						<fieldset id="checkboxProperties" style="display: none;">
-							<legend>Options radio</legend>
-							<label>Groupe:</label><input id="radioGroup"
-								onblur="updateRadioGroup();" type="text" />
-						</fieldset>
-						<fieldset id="radioProperties" style="display: none;">
-							<legend>Options radio</legend>
-							<label>Groupe:</label><input id="radioGroup"
-								onblur="updateRadioGroup();" type="text" />
+							<legend>Source de données combobox</legend>
+							<label>Valeur:</label><select id="xmlColumns" onchange="updateSelectedDatasource()"></select>
 						</fieldset>
 						<fieldset id="tableProperties" style="display: none;">
 							<legend>Options de tableau</legend>
