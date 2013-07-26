@@ -119,7 +119,7 @@ public class XmlValidator {
 			int j=1;
 		        while (rs.next())
 		        {
-		            Element row = doc.createElement(from+Integer.toString(j));
+		            Element row = doc.createElement(from);
 		            results.appendChild(row);
 
 		            for (int i = 1; i <= colCount; i++)
