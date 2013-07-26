@@ -84,6 +84,13 @@ function XSL_addElement(element, viewVisible)
 	XSL_updateForm(viewVisible);
 }
 
+function XSL_updateElement(id, newElement)
+{
+	var nodeToReplace = findFirstNode(xsl_form, newElement.tagName, 'id', id);
+	
+	xsl_form.replaceChild(newElement, nodeToReplace);
+}
+
 function XSL_createCombobox(newId, newId, datasource, displayedValue)
 {
 	//var combobox

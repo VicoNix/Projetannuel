@@ -79,18 +79,18 @@
 					<div id="toolBox">
 						<fieldset>
 							<legend>Toolbox</legend>
-							<span onMouseUp="addLabel()" class="item"><label>Label</label></span><br />
-							<span onMouseUp="addTextField()" class="item"><input
-								type="text" value="TextField" disabled /></span><br /> <span
-								onMouseUp="addPasswordField()" class="item"><input
-								type="password" value="PasswordField" disabled /></span><br /> <span
-								onMouseUp="addCombobox()" class="item"><select disabled><option>Combobox</option></select></span><br />
+							<span onMouseUp="addLabel()" class="item">Label</span><br />
+							<span onMouseUp="addTextField()" class="item">TextField</span><br /> <span
+								onMouseUp="addPasswordField()" class="item">PasswordField</span><br /> <span
+								onMouseUp="addCombobox()" class="item">Combobox</span><br />
 							<span onMouseUp="addRadioButton()" class="item">Bouton
-								radio<input type="radio" disabled />
-							</span><br /> <span onMouseUp="addCheckbox()" class="item">Checkbox<input
-								type="checkbox" disabled /></span><br /> <span onMouseUp="addTable()"
+								radio
+							</span><br /> 
+							<span onMouseUp="addEOL()" class="item">End of line</span><br />
+							<span onMouseUp="addCheckbox()" class="item">Checkbox</span><br /> <span onMouseUp="addTable()"
 								class="item">Table</span><br />
 						</fieldset>
+						<!-- 
 						<fieldset disabled>
 							<legend>Properties</legend>
 							<label>Title:</label><input id="action" onblur="" type="text" />
@@ -98,6 +98,7 @@
 							<label>Check function:</label><input id="onReturn" onblur=""
 								type="text" />
 						</fieldset>
+						 -->
 					</div>
 					<div id="propertiesBox">
 						<fieldset>
@@ -105,21 +106,28 @@
 							<button>Generate form</button>
 							<button>Preview form</button>
 							<button>Remove element</button>
-
 							<button onMouseUp="resetForm()">Reset</button>
-							<button onMouseUp="addEOL()">End of line</button>
-
 							<button onMouseUp="displayBlock('toolBox')">Display
 								properties</button>
 							<button onMouseUp="hideBlock('toolBox')">Hide properties</button>
 						</fieldset>
 						<fieldset id="basicProperties">
-							<legend>Input properties</legend>
+							<legend>Propriétés communes</legend>
 							<label>Id:</label> <input id="currentId"
-								onblur="updateSelectedId();" type="text" /> <label>Default
-								value:</label> <input id="defaultValue" onblur="updateSelectedValue();"
-								type="text" /> <label>Label:</label> <input id=""
-								onblur="updateSelected();" type="text" />
+								onblur="updateSelectedId();" type="text" />
+						</fieldset>
+						<fieldset id="textProperties" style="display: none;">
+							<legend>Propriétés texte</legend>
+							<label>Texte:</label> <input id="defaultValue" onblur="updateSelectedValue();"
+								type="text" />
+						</fieldset>
+						<fieldset id="comboProperties" style="display: none;">
+							<legend>Datasource</legend>
+							<label>Url:</label><input id="dataSourceUrl"
+								onblur="updateDatasourceUrl();" type="text" /> <label>Static:</label><input
+								id="defaultValue" onblur="updateDatasourceFromText();"
+								type="text" /> <label>Function:</label><input id="" onblur=""
+								type="text" />
 						</fieldset>
 						<fieldset id="comboProperties" style="display: none;">
 							<legend>Datasource</legend>

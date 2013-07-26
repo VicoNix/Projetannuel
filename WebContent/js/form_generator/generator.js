@@ -116,6 +116,7 @@ function addTextField()
 	currentElement.setAttribute("name", newId);
 	currentElement.setAttribute("type", "text");
 	currentElement.setAttribute("value", "");
+	currentElement.setAttribute("onMouseUp", "selectNode(\""+ newId +"\", \"input\")");
 	
 	XSL_addElement(currentElement, viewVisible);
 
@@ -134,6 +135,7 @@ function addPasswordField()
 	currentElement.setAttribute("name", newId);
 	currentElement.setAttribute("type", "password");
 	currentElement.setAttribute("value", "");
+	currentElement.setAttribute("onMouseUp", "selectNode(\""+ newId +"\", \"input\")");
 
 	XSL_addElement(currentElement, viewVisible);
 	
@@ -219,26 +221,39 @@ function displaySelectedProperties(type)
 		document.getElementById("defaultValue").value = currentElement.innerHTML;
 
 	// handle properties panels to display
-	if ('radio' == type)
+	displayBlock('basicProperties');
+	
+	if ('input' == type || 'label' == type)
 	{
+		displayBlock('textProperties');
+		hideBlock('radioProperties');
+		hideBlock('checkboxProperties');
+		hideBlock('comboProperties');
+	}
+	else if ('radio' == type)
+	{
+		hideBlock('textProperties');
 		displayBlock('radioProperties');
 		hideBlock('checkboxProperties');
 		hideBlock('comboProperties');
 	}
 	else if ('select' == type)
 	{
+		hideBlock('textProperties');
 		hideBlock('radioProperties');
 		hideBlock('checkboxProperties');
 		displayBlock('comboProperties');
 	}
 	else if ('checkbox' == type)
 	{
+		hideBlock('textProperties');
 		hideBlock('radioProperties');
 		displayBlock('checkboxProperties');
 		hideBlock('comboProperties');
 	}
 	else
 	{
+		hideBlock('textProperties');
 		hideBlock('radioProperties');
 		hideBlock('checkboxProperties');
 		hideBlock('comboProperties');
@@ -247,7 +262,7 @@ function displaySelectedProperties(type)
 
 function selectNode(nodeId, type)
 {
-	selectedId = nodeId;
+	currentElement = document.getElementById(nodeId);
 	
 	displaySelectedProperties(type);
 }
@@ -255,15 +270,33 @@ function selectNode(nodeId, type)
 function updateSelectedId()
 {
 	var element = document.getElementById(selectedId);
-
+	
 	element.id = document.getElementById("currentId").value;
 	element.setAttribute("name", document.getElementById("currentId").value);
 	element.value = document.getElementById("defaultValue").value;
+	element.setAttribute("onMouseUp", "selectNode(\""+element.id +"\", \"label\")");
+	
+	XSL_updateElement(selectedId, element);
+	
+	selectedId = element.id;
+	
+	updateHTML();
 }
 
+
+// Allows to change value (for text inputs) and label content
 function updateSelectedValue()
 {
-	document.getElementById(selectedId).value  = document.getElementById("defaultValue").value;
+	var elementToUpdate = document.getElementById(selectedId);
+	
+	if (undefined != elementToUpdate.value)
+		elementToUpdate.setAttribute("value", document.getElementById("defaultValue").value);
+	else
+		elementToUpdate.innerHTML = document.getElementById("defaultValue").value;
+	
+	XSL_updateElement(selectedId, elementToUpdate);
+	
+	updateHTML();
 }
 
 // swaps between view display and editor display
