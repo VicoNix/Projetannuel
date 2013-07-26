@@ -71,6 +71,8 @@ public class FormViewer extends HttpServlet {
 			}while(parametre != null);
 			parser.setReponses(reponses);
 			parser.parse();
+			request.setAttribute("tableau", parser.getTable_displayed());
+			System.out.println(parser.getTable_displayed());
 			this.getServletContext().getRequestDispatcher( "/WEB-INF/FormulaireRepondu.jsp" ).forward( request, response );
 		}
 		

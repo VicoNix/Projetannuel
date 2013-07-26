@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet href="projet-gen.xsl" type="text/xsl"?>
 <Result query="SELECT IMMATRICULATION,VALEUR,NOM_POTENTIEL,DATE_RELEVE FROM LIEN_VEHICULE_POTENTIEL_VIEW WHERE LIEN_VEHICULE_POTENTIEL_VIEW.IMMATRICULATION='61340040'">
 	<LIEN_VEHICULE_POTENTIEL_VIEW>
 		<IMMATRICULATION>61340040</IMMATRICULATION>

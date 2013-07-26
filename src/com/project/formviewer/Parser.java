@@ -36,6 +36,8 @@ public class Parser {
 	private String html;
 	private String requete_select;
 	private ArrayList<String> requetes_insert;
+	
+	private String table_displayed;
 
 	private ArrayList<String> reponses;
 
@@ -51,6 +53,19 @@ public class Parser {
 		this.xsl = xsl;
 		this.xml = xml;
 		this.html = html;
+	}
+	
+	
+	
+
+
+	public String getTable_displayed() {
+		return table_displayed;
+	}
+
+
+	public void setTable_displayed(String table_displayed) {
+		this.table_displayed = table_displayed;
 	}
 
 
@@ -118,7 +133,8 @@ public class Parser {
 				e.printStackTrace();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				
 			}
 		}
 		
@@ -148,15 +164,16 @@ public class Parser {
 				
 				NodeList occurences = fichier_xml.getElementsByTagName(view);
 				System.out.println("Il y a "+occurences.getLength()+" éléments");
-				
+				table_displayed = "";
 				for(int compteur_occurence=0;compteur_occurence<occurences.getLength();compteur_occurence++){
-					
+					table_displayed = table_displayed + "<tr>";
 					NodeList valeurs = occurences.item(compteur_occurence).getChildNodes();
 					String requete = debut_requete;
 					for(int compteur_de_valeur=0;compteur_de_valeur<valeurs.getLength();compteur_de_valeur++){
 						//Element element = (Element)valeurs.item(compteur_de_valeur);
+						table_displayed = table_displayed +"<td>";
 						if(valeurs.item(compteur_de_valeur).getNodeType()==Node.ELEMENT_NODE){
-							
+							table_displayed = table_displayed + valeurs.item(compteur_de_valeur).getTextContent();
 							if(valeurs.item(compteur_de_valeur).toString().contains("DATE")){
 								requete = requete + "to_date('"+valeurs.item(compteur_de_valeur).getTextContent()+"','RRRR-MM-DD'),";
 							}
@@ -166,13 +183,15 @@ public class Parser {
 							
 							
 						}
-							
+						table_displayed = table_displayed +"</td>";
 						//System.out.println(valeurs.item(compteur_de_valeur).getTextContent());
 					}
 					requete = requete.substring(0,requete.lastIndexOf("")-1);
 					requete = requete +")";
 					System.out.println(requete);
 					requetes_insert.add(requete);
+					
+					table_displayed = table_displayed + "</tr>";
 				}
 				
 				
