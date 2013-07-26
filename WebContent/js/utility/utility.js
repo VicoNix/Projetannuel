@@ -12,7 +12,7 @@ function changeVisibility(blockId, visible)
 {
 	var element = document.getElementById(blockId);
 	
-	element.style.display = visible ? "inline-block" : "none";
+	element.style.display = visible ? "" : "none";
 	
 	if (visible && undefined != element.focus)
 	{
@@ -37,4 +37,18 @@ function parseXML(xmlText)
 	}
 	
 	return xmlDoc;
+}
+
+//returns the 1st node with the tag named 'tagName' where the attributeToTest has a value that
+//matches valueToMatch
+function findFirstNode(root, tagName, attributeToTest, valueToMatch)
+{
+	var tagElements = root.getElementsByTagName(tagName); 
+	for(var i=0,j=tagElements.length; i<j; i+=1)
+	{ 
+		if(tagElements[i].getAttribute(attributeToTest) == valueToMatch ) 
+		{ 
+			return tagElements[i]; 
+		}
+	}
 }

@@ -63,45 +63,6 @@
    <li class='last'><a href='Contact'><span>Contact</span></a></li>
 </ul>
 </div>
-<script>
-function refreshHTML()
-{
-document.getElementById('xmlajax').value=xmleditor.getValue();
-document.getElementById('xslajax').value=xsleditor.getValue();
-}
-</script>
-<h2><p align="center">Remplissage de Formulaire</p></h2>
-		<div class="example">
-			<h2></h2>
-
-			</a><form method="POST" action="FormViewer" id="FormViewerform">
-<input type="hidden" name="file" id="file"/>
-<input type="hidden" name="xmlajax" id="xmlajax"/>
-<input type="hidden" name="xslajax" id="xslajax"/>
-
-	</form>	<br>
-	</div>
-	
-		<br><br>
-<style>
-table.dispo td {
-  width:1%;
-}
-</style>
-	<table class="dispo">
-		
-		<tr>
-			<td><div id="fileTreeDemo_1" class="demo"></div></td>
-			<td><%
-	out.println((String) request.getAttribute("filecontenthtml"));
-%>
-			</td>
-			
-			
-		</tr>
-		
-	</table>
-
 
 
 </body>
